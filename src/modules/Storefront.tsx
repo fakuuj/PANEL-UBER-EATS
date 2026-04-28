@@ -275,12 +275,17 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                   <label className="flex items-center p-4 border border-[#e60000] bg-[#1b1b1b] rounded cursor-pointer shadow-[0_0_15px_rgba(230,0,0,0.1)]">
                     <input defaultChecked className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
                     <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Credit / Debit Card</span>
-                    <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">payments</span>
+                    <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">credit_card</span>
                   </label>
                   <label className="flex items-center p-4 border border-[#333333] bg-[#0e0e0e] rounded cursor-pointer hover:border-[#5f3f3a] transition-colors">
                     <input className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
                     <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Digital Wallet</span>
                     <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">account_balance_wallet</span>
+                  </label>
+                  <label className="flex items-center p-4 border border-[#333333] bg-[#0e0e0e] rounded cursor-pointer hover:border-[#5f3f3a] transition-colors">
+                    <input className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
+                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Cash (Efectivo)</span>
+                    <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">payments</span>
                   </label>
                 </div>
               </section>
