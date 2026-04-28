@@ -198,7 +198,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
 
           <div className="mb-12">
             <h1 className="font-['Space_Grotesk'] text-[56px] md:text-[64px] font-bold leading-[1.1] tracking-[-0.04em] text-[#e2e2e2] uppercase mb-4">Checkout</h1>
-            <p className="text-[18px] text-[#e9bcb5]">Complete your order details below.</p>
+            <p className="text-[18px] text-[#e9bcb5]">Completa los detalles de tu pedido a continuación.</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-[32px]">
@@ -207,7 +207,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
               <section className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-8">
                 <h2 className="font-['Space_Grotesk'] text-[24px] font-semibold text-[#e2e2e2] mb-6 uppercase flex items-center gap-3">
                   <span className="material-symbols-outlined text-[#e60000]">local_shipping</span>
-                  Delivery Details
+                  Detalles de entrega
                 </h2>
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <label className="cursor-pointer">
@@ -227,14 +227,14 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">First Name</label>
+                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Nombre</label>
                       <input
                         value={firstName} onChange={e => setFirstName(e.target.value)}
                         className="w-full bg-[#0e0e0e] border-b border-[#333333] border-t-0 border-x-0 focus:border-[#e60000] focus:ring-0 text-[#e2e2e2] py-3 px-3 rounded-t-md transition-colors placeholder:text-[#444] outline-none"
                         placeholder="Akira" type="text" />
                     </div>
                     <div>
-                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Last Name</label>
+                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Apellido</label>
                       <input
                         value={lastName} onChange={e => setLastName(e.target.value)}
                         className="w-full bg-[#0e0e0e] border-b border-[#333333] border-t-0 border-x-0 focus:border-[#e60000] focus:ring-0 text-[#e2e2e2] py-3 px-3 rounded-t-md transition-colors placeholder:text-[#444] outline-none"
@@ -242,7 +242,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                     </div>
                   </div>
                   <div>
-                    <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Delivery Address</label>
+                    <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Dirección de entrega</label>
                     <input
                       value={address} onChange={e => setAddress(e.target.value)}
                       className="w-full bg-[#0e0e0e] border-b border-[#333333] border-t-0 border-x-0 focus:border-[#e60000] focus:ring-0 text-[#e2e2e2] py-3 px-3 rounded-t-md transition-colors placeholder:text-[#444] outline-none"
@@ -250,17 +250,17 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Phone Number</label>
+                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Número de teléfono</label>
                       <input
                         value={phone} onChange={e => setPhone(e.target.value)}
                         className="w-full bg-[#0e0e0e] border-b border-[#333333] border-t-0 border-x-0 focus:border-[#e60000] focus:ring-0 text-[#e2e2e2] py-3 px-3 rounded-t-md transition-colors placeholder:text-[#444] outline-none"
                         placeholder="+1 (555) 019-8372" type="tel" />
                     </div>
                     <div>
-                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Instructions (Optional)</label>
+                      <label className="block font-bold text-[14px] text-[#e9bcb5] mb-2 uppercase">Instrucciones (Opcional)</label>
                       <input
                         className="w-full bg-[#0e0e0e] border-b border-[#333333] border-t-0 border-x-0 focus:border-[#e60000] focus:ring-0 text-[#e2e2e2] py-3 px-3 rounded-t-md transition-colors placeholder:text-[#444] outline-none"
-                        placeholder="Leave at lobby" type="text" />
+                        placeholder="Dejar en el lobby" type="text" />
                     </div>
                   </div>
                 </div>
@@ -269,22 +269,22 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
               <section className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-8">
                 <h2 className="font-['Space_Grotesk'] text-[24px] font-semibold text-[#e2e2e2] mb-6 uppercase flex items-center gap-3">
                   <span className="material-symbols-outlined text-[#e60000]">credit_card</span>
-                  Payment Method
+                  Método de pago
                 </h2>
                 <div className="space-y-4">
                   <label className="flex items-center p-4 border border-[#e60000] bg-[#1b1b1b] rounded cursor-pointer shadow-[0_0_15px_rgba(230,0,0,0.1)]">
                     <input defaultChecked className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
-                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Credit / Debit Card</span>
+                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Tarjeta de crédito / débito</span>
                     <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">credit_card</span>
                   </label>
                   <label className="flex items-center p-4 border border-[#333333] bg-[#0e0e0e] rounded cursor-pointer hover:border-[#5f3f3a] transition-colors">
                     <input className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
-                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Digital Wallet</span>
+                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Billetera digital</span>
                     <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">account_balance_wallet</span>
                   </label>
                   <label className="flex items-center p-4 border border-[#333333] bg-[#0e0e0e] rounded cursor-pointer hover:border-[#5f3f3a] transition-colors">
                     <input className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
-                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Cash (Efectivo)</span>
+                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Efectivo</span>
                     <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">payments</span>
                   </label>
                 </div>
@@ -294,7 +294,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
             {/* Right Column: Summary */}
             <div className="lg:col-span-5">
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-8 sticky top-28">
-                <h2 className="font-['Space_Grotesk'] text-[24px] font-semibold text-[#e2e2e2] mb-6 uppercase border-b border-[#333333] pb-4">Order Summary</h2>
+                <h2 className="font-['Space_Grotesk'] text-[24px] font-semibold text-[#e2e2e2] mb-6 uppercase border-b border-[#333333] pb-4">Resumen del pedido</h2>
 
                 <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                   {cart.map((item) => (
