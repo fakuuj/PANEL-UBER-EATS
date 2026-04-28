@@ -369,7 +369,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
             VIVI LA<br />EXPERIENCIA
           </h1>
           <p className="text-[#e9bcb5] text-lg md:text-xl max-w-2xl mx-auto mb-10">
-            La primera y unica <span className="text-[#e60000] font-bold tracking-[0.2em] uppercase text-sm md:text-base mb-4">SUSHIBURGER</span> de Uruguay y el mundo!
+            La primera y única <span className="text-[#e60000] font-bold tracking-[0.2em] uppercase text-sm md:text-base mb-4">SUSHIBURGER</span>, brindando una experiencia premium en más de 4 países por   el mundo!
           </p>
           <button
             onClick={() => {
