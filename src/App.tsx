@@ -345,8 +345,16 @@ export default function App() {
   useEffect(() => {
     const handlePop = () => setRoute(window.location.pathname);
     window.addEventListener('popstate', handlePop);
+    
+    // Update title based on route
+    if (route.startsWith('/admin')) {
+      document.title = "Panel de Control | Sushi Burger Experience";
+    } else {
+      document.title = "Sushi Burger Experience — Premium Fusion";
+    }
+
     return () => window.removeEventListener('popstate', handlePop);
-  }, []);
+  }, [route]);
 
   if (route.startsWith('/admin')) {
     return <AdminPanel />;
