@@ -362,9 +362,9 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=2000&auto=format&fit=crop"
+            src="https://raw.githubusercontent.com/fakuuj/PANEL-UBER-EATS/main/src/images/california.png"
             alt="Sushi Burger Background"
-            className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
         </div>
