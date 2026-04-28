@@ -284,7 +284,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                   </label>
                   <label className="flex items-center p-4 border border-[#333333] bg-[#0e0e0e] rounded cursor-pointer hover:border-[#5f3f3a] transition-colors">
                     <input className="text-[#e60000] focus:ring-[#e60000] bg-[#0e0e0e] border-[#333333] mr-4" name="payment" type="radio" />
-                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Efectivo</span>
+                    <span className="font-bold text-[14px] text-[#e2e2e2] uppercase">Cash (Efectivo)</span>
                     <span className="ml-auto material-symbols-outlined text-[#e9bcb5]">payments</span>
                   </label>
                 </div>
@@ -362,9 +362,9 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
       <section className="relative w-full h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://raw.githubusercontent.com/fakuuj/PANEL-UBER-EATS/main/src/images/california.png"
+            src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=2000&auto=format&fit=crop"
             alt="Sushi Burger Background"
-            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
+            className="w-full h-full object-cover opacity-40 mix-blend-overlay"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
         </div>
@@ -382,7 +382,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
             }}
             className="bg-[#e60000] hover:bg-white hover:text-black text-white font-bold text-[14px] tracking-widest uppercase py-4 px-10 rounded-full transition-all duration-300"
           >
-            Explore Menu
+            REALIZAR PEDIDO
           </button>
         </div>
       </section>
@@ -426,7 +426,7 @@ export default function Storefront({ onNavigate }: StorefrontProps) {
                       className="w-full border border-[#444] hover:border-[#e60000] bg-transparent hover:bg-[#e60000] text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-wide text-sm"
                     >
                       <span className="material-symbols-outlined text-lg">add_shopping_cart</span>
-                      Add to Order
+                      Agregar al pedido
                     </button>
                   ) : (
                     <div className="flex items-center justify-between border border-[#e60000] rounded-xl overflow-hidden">
