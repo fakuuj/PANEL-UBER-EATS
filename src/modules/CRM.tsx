@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Star, Crown, Gift, TrendingUp, Users, Mail, Phone, Check, X } from 'lucide-react';
 import { customers } from '../data/mockData';
 
@@ -49,13 +49,45 @@ const tierConfig: Record<string, { color: string; bg: string; icon: string; bord
   Bronze: { color: '#D97706', bg: 'rgba(217,119,6,0.1)', icon: '🥉', border: 'rgba(217,119,6,0.2)' },
 };
 
-export default function CRM() {
+interface CRMProps {
+  region?: 'consolidated' | 'uy' | 'es';
+  setRegion?: (r: 'consolidated' | 'uy' | 'es') => void;
+}
+
+export default function CRM({ region = 'consolidated', setRegion }: CRMProps) {
   const [search, setSearch] = useState('');
   const [tierFilter, setTierFilter] = useState('all');
   const [selected, setSelected] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  const filtered = customers.filter(c => {
+  // Region mapping helpers
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+  const getGlobalRegion = (rf: string): 'consolidated' | 'uy' | 'es' => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [regionFilter, setRegionFilter] = useState<string>(getInternalRegion(region));
+
+  useEffect(() => {
+    setRegionFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegionFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
+
+  const branchCustomers = customers.filter(c => regionFilter === 'all' || c.branch === regionFilter);
+
+  const filtered = branchCustomers.filter(c => {
     const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase());
     const matchTier = tierFilter === 'all' || c.tier === tierFilter;
     return matchSearch && matchTier;
@@ -75,6 +107,28 @@ export default function CRM() {
           <button className="btn-secondary"><Gift size={13} /> Nueva Promo</button>
           <button className="btn-primary" onClick={() => setShowModal(true)}><Mail size={13} /> Campaña Email</button>
         </div>
+      </div>
+
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: regionFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${regionFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: regionFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
       </div>
 
       {/* KPIs */}
@@ -103,7 +157,7 @@ export default function CRM() {
       {/* Loyalty Tiers */}
       <div className="grid grid-cols-4 gap-3 mb-6">
         {Object.entries(tierConfig).map(([tier, config]) => {
-          const count = customers.filter(c => c.tier === tier).length;
+          const count = branchCustomers.filter(c => c.tier === tier).length;
           return (
             <div key={tier} className="card-premium p-4 text-center" style={{ border: `1px solid ${config.border}` }}>
               <span className="text-2xl block mb-2">{config.icon}</span>

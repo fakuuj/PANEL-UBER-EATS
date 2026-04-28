@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, X, Clock, MapPin, Star, Zap, RefreshCw, TrendingUp, AlertTriangle } from 'lucide-react';
 import { uberEatsOrders } from '../data/mockData';
 
@@ -10,9 +10,39 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
   rechazado: { label: 'Rechazado', color: '#F43F5E', bg: 'rgba(244,63,94,0.12)' },
 };
 
-export default function UberEats() {
+interface UberEatsProps {
+  region?: 'consolidated' | 'uy' | 'es';
+  setRegion?: (r: 'consolidated' | 'uy' | 'es') => void;
+}
+
+export default function UberEats({ region = 'consolidated', setRegion }: UberEatsProps) {
   const [orders, setOrders] = useState(uberEatsOrders.map(o => ({ ...o, id: o.id })));
   const [showMenu, setShowMenu] = useState(false);
+
+  // Region mapping helpers
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+  const getGlobalRegion = (rf: string): 'consolidated' | 'uy' | 'es' => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [regionFilter, setRegionFilter] = useState<string>(getInternalRegion(region));
+
+  useEffect(() => {
+    setRegionFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegionFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
 
   const accept = (id: string) => {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'en_cocina' } : o));
@@ -22,9 +52,10 @@ export default function UberEats() {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'rechazado' } : o));
   };
 
-  const newOrders = orders.filter(o => o.status === 'nuevo');
-  const activeOrders = orders.filter(o => ['en_cocina', 'en_camino'].includes(o.status));
-  const completedOrders = orders.filter(o => ['entregado', 'rechazado'].includes(o.status));
+  const branchFiltered = orders.filter(o => regionFilter === 'all' || o.branch === regionFilter);
+  const newOrders = branchFiltered.filter(o => o.status === 'nuevo');
+  const activeOrders = branchFiltered.filter(o => ['en_cocina', 'en_camino'].includes(o.status));
+  const completedOrders = branchFiltered.filter(o => ['entregado', 'rechazado'].includes(o.status));
 
   return (
     <div className="p-6 animate-fade-up">
@@ -54,6 +85,28 @@ export default function UberEats() {
             Actualizar
           </button>
         </div>
+      </div>
+
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: regionFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${regionFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: regionFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
       </div>
 
       {/* Stats */}

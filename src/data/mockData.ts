@@ -65,16 +65,16 @@ export const liveOrders = [
 ];
 
 export const inventoryItems = [
-  { name: 'Carne vacuna premium', stock: 24.5, unit: 'kg', min: 15, max: 80, status: 'ok', supplier: 'Frigorífico El Gaucho', cost: 850 },
-  { name: 'Harina 000', stock: 8.2, unit: 'kg', min: 20, max: 100, status: 'low', supplier: 'Molinos Río de la Plata', cost: 120 },
-  { name: 'Tomate perita', stock: 12, unit: 'kg', min: 10, max: 40, status: 'warning', supplier: 'Verdulería Central', cost: 85 },
-  { name: 'Vino Malbec', stock: 48, unit: 'btl', min: 24, max: 120, status: 'ok', supplier: 'Bodega Familia Zuccardi', cost: 680 },
-  { name: 'Aceite de oliva', stock: 6.8, unit: 'lt', min: 10, max: 40, status: 'low', supplier: 'Importadora Gourmet', cost: 920 },
-  { name: 'Queso provolone', stock: 15.4, unit: 'kg', min: 8, max: 35, status: 'ok', supplier: 'Lácteos La Suiza', cost: 560 },
-  { name: 'Arroz bomba', stock: 22, unit: 'kg', min: 15, max: 60, status: 'ok', supplier: 'Distribuidora ES', cost: 210 },
-  { name: 'Mariscos mix', stock: 5.1, unit: 'kg', min: 12, max: 30, status: 'low', supplier: 'Pescadería Valencia', cost: 1840 },
-  { name: 'Cerveza artesanal', stock: 144, unit: 'u', min: 72, max: 300, status: 'ok', supplier: 'Cervecería Patagonia', cost: 185 },
-  { name: 'Azúcar impalpable', stock: 3.2, unit: 'kg', min: 5, max: 25, status: 'low', supplier: 'Distribuidora Norte', cost: 95 },
+  { name: 'Carne vacuna premium', stock: 24.5, unit: 'kg', min: 15, max: 80, status: 'ok', supplier: 'Frigorífico El Gaucho', cost: 850, branch: 'UY' },
+  { name: 'Harina 000', stock: 8.2, unit: 'kg', min: 20, max: 100, status: 'low', supplier: 'Molinos Río de la Plata', cost: 120, branch: 'UY' },
+  { name: 'Tomate perita', stock: 12, unit: 'kg', min: 10, max: 40, status: 'warning', supplier: 'Verdulería Central', cost: 85, branch: 'ES' },
+  { name: 'Vino Malbec', stock: 48, unit: 'btl', min: 24, max: 120, status: 'ok', supplier: 'Bodega Familia Zuccardi', cost: 680, branch: 'UY' },
+  { name: 'Aceite de oliva', stock: 6.8, unit: 'lt', min: 10, max: 40, status: 'low', supplier: 'Importadora Gourmet', cost: 920, branch: 'UY' },
+  { name: 'Queso provolone', stock: 15.4, unit: 'kg', min: 8, max: 35, status: 'ok', supplier: 'Lácteos La Suiza', cost: 560, branch: 'UY' },
+  { name: 'Arroz bomba', stock: 22, unit: 'kg', min: 15, max: 60, status: 'ok', supplier: 'Distribuidora ES', cost: 210, branch: 'ES' },
+  { name: 'Mariscos mix', stock: 5.1, unit: 'kg', min: 12, max: 30, status: 'low', supplier: 'Pescadería Valencia', cost: 1840, branch: 'ES' },
+  { name: 'Cerveza artesanal', stock: 144, unit: 'u', min: 72, max: 300, status: 'ok', supplier: 'Cervecería Patagonia', cost: 185, branch: 'UY' },
+  { name: 'Azúcar impalpable', stock: 3.2, unit: 'kg', min: 5, max: 25, status: 'low', supplier: 'Distribuidora Norte', cost: 95, branch: 'UY' },
 ];
 
 export const employees = [

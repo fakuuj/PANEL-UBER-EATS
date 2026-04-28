@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Search, Plus, Check, X, Eye, Printer,
   RefreshCw
@@ -83,19 +83,53 @@ const nextStatus: Record<string, string> = {
   en_camino: 'entregado',
 };
 
-export default function Orders() {
+interface OrdersProps {
+  region?: 'consolidated' | 'uy' | 'es';
+  setRegion?: (r: 'consolidated' | 'uy' | 'es') => void;
+}
+
+export default function Orders({ region = 'consolidated', setRegion }: OrdersProps) {
   const [orders, setOrders] = useState(allOrders);
   const [filter, setFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  
+  // Map global region to internal regionFilter format
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+
+  // Map internal regionFilter to global region format
+  const getGlobalRegion = (rf: string) => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [regionFilter, setRegionFilter] = useState<string>(getInternalRegion(region));
+
+  // Sync local regionFilter when global region prop changes
+  useEffect(() => {
+    setRegionFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegionFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const filtered = orders.filter(o => {
+    const matchRegion = regionFilter === 'all' || o.branch === regionFilter;
     const matchStatus = filter === 'all' || o.status === filter;
     const matchType = typeFilter === 'all' || o.type === typeFilter;
     const matchSearch = o.id.toLowerCase().includes(search.toLowerCase()) || o.client.toLowerCase().includes(search.toLowerCase());
-    return matchStatus && matchType && matchSearch;
+    return matchRegion && matchStatus && matchType && matchSearch;
   });
 
   const advance = (id: string) => {
@@ -105,12 +139,12 @@ export default function Orders() {
   };
 
   const counts = {
-    all: orders.length,
-    nuevo: orders.filter(o => o.status === 'nuevo').length,
-    en_cocina: orders.filter(o => o.status === 'en_cocina').length,
-    listo: orders.filter(o => o.status === 'listo').length,
-    en_camino: orders.filter(o => o.status === 'en_camino').length,
-    entregado: orders.filter(o => o.status === 'entregado').length,
+    all: orders.filter(o => regionFilter === 'all' || o.branch === regionFilter).length,
+    nuevo: orders.filter(o => o.status === 'nuevo' && (regionFilter === 'all' || o.branch === regionFilter)).length,
+    en_cocina: orders.filter(o => o.status === 'en_cocina' && (regionFilter === 'all' || o.branch === regionFilter)).length,
+    listo: orders.filter(o => o.status === 'listo' && (regionFilter === 'all' || o.branch === regionFilter)).length,
+    en_camino: orders.filter(o => o.status === 'en_camino' && (regionFilter === 'all' || o.branch === regionFilter)).length,
+    entregado: orders.filter(o => o.status === 'entregado' && (regionFilter === 'all' || o.branch === regionFilter)).length,
   };
 
   const selectedOrder = orders.find(o => o.id === selected);
@@ -127,6 +161,28 @@ export default function Orders() {
           <button className="btn-secondary"><RefreshCw size={13} /> Actualizar</button>
           <button className="btn-primary" onClick={() => setShowModal(true)}><Plus size={13} /> Nuevo Pedido</button>
         </div>
+      </div>
+
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: regionFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${regionFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: regionFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
       </div>
 
       {/* Stats bar */}

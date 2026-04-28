@@ -118,20 +118,73 @@ function SettingsPlaceholder({ theme, toggleTheme }: { theme: string; toggleThem
 
 
 
-function SchedulePlaceholder() {
+function SchedulePlaceholder({ region = 'consolidated', setRegion }: { region?: 'consolidated' | 'uy' | 'es'; setRegion?: (r: 'consolidated' | 'uy' | 'es') => void }) {
   const days = ['Lunes 7', 'Martes 8', 'Miércoles 9', 'Jueves 10', 'Viernes 11', 'Sábado 12', 'Domingo 13'];
-  const shifts = [
-    { time: '07:00–15:00', name: 'Martín R.', role: 'Chef', color: '#3B82F6' },
-    { time: '08:00–16:00', name: 'Diego F.', role: 'Chef Sous', color: '#7C3AED' },
-    { time: '12:00–20:00', name: 'Sofía B.', role: 'Sala', color: '#10B981' },
-    { time: '15:00–23:00', name: 'Valentina C.', role: 'Bartender', color: '#F59E0B' },
-    { time: '16:00–00:00', name: 'Pablo S.', role: 'Delivery', color: '#06B6D4' },
+  const allShifts = [
+    { time: '07:00–15:00', name: 'Martín R.', role: 'Chef', color: '#3B82F6', branch: 'UY' },
+    { time: '08:00–16:00', name: 'Diego F.', role: 'Chef Sous', color: '#7C3AED', branch: 'UY' },
+    { time: '12:00–20:00', name: 'Sofía B.', role: 'Sala', color: '#10B981', branch: 'UY' },
+    { time: '15:00–23:00', name: 'Valentina C.', role: 'Bartender', color: '#F59E0B', branch: 'UY' },
+    { time: '16:00–00:00', name: 'Pablo S.', role: 'Delivery', color: '#06B6D4', branch: 'UY' },
+    { time: '08:00–16:00', name: 'Carmen L.', role: 'Chef Principal', color: '#F43F5E', branch: 'ES' },
+    { time: '10:00–18:00', name: 'Alejandro R.', role: 'Maitre', color: '#7C3AED', branch: 'ES' },
+    { time: '14:00–22:00', name: 'Isabel M.', role: 'Contadora', color: '#10B981', branch: 'ES' },
   ];
+
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+  const getGlobalRegion = (rf: string): 'consolidated' | 'uy' | 'es' => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [regionFilter, setRegionFilter] = useState<string>(getInternalRegion(region));
+
+  useEffect(() => {
+    setRegionFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegionFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
+
+  const shifts = allShifts.filter(s => regionFilter === 'all' || s.branch === regionFilter);
+  const subtitle = regionFilter === 'UY' ? 'Uruguay' : regionFilter === 'ES' ? 'España' : 'Uruguay & España';
 
   return (
     <div className="p-6 animate-fade-up">
       <h2 className="text-xl font-bold text-white mb-2">Horarios & Turnos</h2>
-      <p className="text-sm mb-6" style={{ color: '#475569' }}>Semana del 7 al 13 de Julio · Uruguay</p>
+      <p className="text-sm mb-6" style={{ color: '#475569' }}>Semana del 7 al 13 de Julio · {subtitle}</p>
+
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: regionFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${regionFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: regionFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
       <div className="card-premium overflow-hidden">
         <div className="grid" style={{ gridTemplateColumns: '160px repeat(7, 1fr)' }}>
           <div className="px-4 py-3 text-xs font-semibold" style={{ color: '#475569', borderBottom: '1px solid #1a2640' }}>Empleado</div>
@@ -142,7 +195,10 @@ function SchedulePlaceholder() {
             <>
               <div key={shift.name + 'name'} className="px-4 py-3" style={{ borderBottom: '1px solid #0f1a2e' }}>
                 <p className="text-xs font-semibold text-white">{shift.name}</p>
-                <p className="text-xs" style={{ color: '#475569' }}>{shift.role}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs" style={{ color: '#475569' }}>{shift.role}</p>
+                  <span className="text-xs" style={{ fontSize: '9px', color: '#475569' }}>{shift.branch === 'UY' ? '🇺🇾' : '🇪🇸'}</span>
+                </div>
               </div>
               {days.map((d, i) => (
                 <div key={d + shift.name} className="px-2 py-3" style={{ borderBottom: '1px solid #0f1a2e', borderLeft: '1px solid #1a2640' }}>
@@ -163,7 +219,7 @@ function SchedulePlaceholder() {
   );
 }
 
-const moduleComponents: Record<string, React.ComponentType> = {
+const moduleComponents: Record<string, React.ComponentType<any>> = {
   dashboard: Dashboard,
   analytics: Analytics,
   orders: Orders,
@@ -277,7 +333,7 @@ export default function App() {
           {activeModule === 'settings' ? (
             <SettingsPlaceholder theme={theme} toggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
           ) : (
-            <ActiveModule region={region} />
+            <ActiveModule region={region} setRegion={setRegion} />
           )}
         </main>
 

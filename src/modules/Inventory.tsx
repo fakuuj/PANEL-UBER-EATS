@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, AlertTriangle, TrendingDown, Package, Truck, RefreshCw, Check, X } from 'lucide-react';
 import { inventoryItems } from '../data/mockData';
 
@@ -42,25 +42,57 @@ function OrderInventoryModal({ onClose, prefilled }: { onClose: () => void; pref
   );
 }
 
-export default function Inventory() {
+interface InventoryProps {
+  region?: 'consolidated' | 'uy' | 'es';
+  setRegion?: (r: 'consolidated' | 'uy' | 'es') => void;
+}
+
+export default function Inventory({ region = 'consolidated', setRegion }: InventoryProps) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [prefilledItem, setPrefilledItem] = useState<string | undefined>();
+
+  // Region mapping helpers
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+  const getGlobalRegion = (rf: string): 'consolidated' | 'uy' | 'es' => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [regionFilter, setRegionFilter] = useState<string>(getInternalRegion(region));
+
+  useEffect(() => {
+    setRegionFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegionFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
 
   const openOrder = (itemName?: string) => {
     setPrefilledItem(itemName);
     setShowModal(true);
   };
 
-  const filtered = inventoryItems.filter(item => {
+  const branchItems = inventoryItems.filter(item => regionFilter === 'all' || item.branch === regionFilter);
+
+  const filtered = branchItems.filter(item => {
     const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
     const matchFilter = filter === 'all' || item.status === filter;
     return matchSearch && matchFilter;
   });
 
-  const criticalCount = inventoryItems.filter(i => i.status === 'low').length;
-  const warningCount = inventoryItems.filter(i => i.status === 'warning').length;
+  const criticalCount = branchItems.filter(i => i.status === 'low').length;
+  const warningCount = branchItems.filter(i => i.status === 'warning').length;
 
   return (
     <div className="p-6 animate-fade-up">
@@ -76,12 +108,34 @@ export default function Inventory() {
         </div>
       </div>
 
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: regionFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${regionFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: regionFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="card-premium p-4 relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg, #2563EB, transparent)' }} />
           <p className="text-xs mb-1" style={{ color: '#475569' }}>Total Insumos</p>
-          <p className="text-2xl font-bold text-white">{inventoryItems.length}</p>
+          <p className="text-2xl font-bold text-white">{branchItems.length}</p>
           <p className="text-xs mt-1" style={{ color: '#64748B' }}>productos registrados</p>
         </div>
         <div className="card-premium p-4 relative overflow-hidden">
@@ -112,7 +166,7 @@ export default function Inventory() {
             <span className="text-sm font-semibold text-white">Alertas de Stock Crítico</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {inventoryItems.filter(i => i.status === 'low').map(item => (
+            {branchItems.filter(i => i.status === 'low').map(item => (
               <div key={item.name} className="flex items-center justify-between p-3 rounded-xl" style={{ background: 'rgba(244,63,94,0.08)', border: '1px solid rgba(244,63,94,0.15)' }}>
                 <div>
                   <p className="text-xs font-semibold text-white">{item.name}</p>
@@ -239,7 +293,7 @@ export default function Inventory() {
           <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(124,58,237,0.15)', color: '#A78BFA' }}>AI</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {inventoryItems.filter(i => i.status !== 'ok').map(item => {
+          {branchItems.filter(i => i.status !== 'ok').map(item => {
             const needed = item.max - item.stock;
             return (
               <div key={item.name} className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #1a2640' }}>

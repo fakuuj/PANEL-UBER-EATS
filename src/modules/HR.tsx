@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Plus, TrendingUp, Clock, Users, Award, Check, X } from 'lucide-react';
 import { employees } from '../data/mockData';
 
@@ -65,11 +65,40 @@ const schedule: Record<string, string[]> = {
 
 const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-export default function HR() {
+interface HRProps {
+  region?: 'consolidated' | 'uy' | 'es';
+  setRegion?: (r: 'consolidated' | 'uy' | 'es') => void;
+}
+
+export default function HR({ region = 'consolidated', setRegion }: HRProps) {
   const [view, setView] = useState<'list' | 'schedule'>('list');
   const [search, setSearch] = useState('');
-  const [branchFilter, setBranchFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
+
+  // Region mapping helpers
+  const getInternalRegion = (r: string) => {
+    if (r === 'uy') return 'UY';
+    if (r === 'es') return 'ES';
+    return 'all';
+  };
+  const getGlobalRegion = (rf: string): 'consolidated' | 'uy' | 'es' => {
+    if (rf === 'UY') return 'uy';
+    if (rf === 'ES') return 'es';
+    return 'consolidated';
+  };
+
+  const [branchFilter, setBranchFilter] = useState<string>(getInternalRegion(region));
+
+  useEffect(() => {
+    setBranchFilter(getInternalRegion(region));
+  }, [region]);
+
+  const handleRegionChange = (newRegion: string) => {
+    setBranchFilter(newRegion);
+    if (setRegion) {
+      setRegion(getGlobalRegion(newRegion));
+    }
+  };
 
   const filtered = employees.filter(e => {
     const matchSearch = e.name.toLowerCase().includes(search.toLowerCase());
@@ -89,6 +118,28 @@ export default function HR() {
           <button className="btn-secondary"><Clock size={13} /> Ver Horarios</button>
           <button className="btn-primary" onClick={() => setShowModal(true)}><Plus size={13} /> Nuevo Empleado</button>
         </div>
+      </div>
+
+      {/* Region Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { id: 'all', label: '🌎 Todos', color: '#94A3B8' },
+          { id: 'ES', label: '🇪🇸 España', color: '#F59E0B' },
+          { id: 'UY', label: '🇺🇾 Uruguay', color: '#3B82F6' },
+        ].map((r) => (
+          <button
+            key={r.id}
+            onClick={() => handleRegionChange(r.id)}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{
+              background: branchFilter === r.id ? `${r.color}15` : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${branchFilter === r.id ? `${r.color}40` : '#1a2640'}`,
+              color: branchFilter === r.id ? r.color : '#64748B',
+            }}
+          >
+            {r.label}
+          </button>
+        ))}
       </div>
 
       {/* Stats */}
@@ -129,20 +180,7 @@ export default function HR() {
               style={{ color: '#94A3B8', fontSize: '13px' }}
             />
           </div>
-          {['all', 'UY', 'ES'].map(b => (
-            <button
-              key={b}
-              onClick={() => setBranchFilter(b)}
-              className="px-3 py-2 rounded-lg text-xs font-medium"
-              style={{
-                background: branchFilter === b ? 'rgba(37,99,235,0.15)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${branchFilter === b ? 'rgba(37,99,235,0.35)' : '#1a2640'}`,
-                color: branchFilter === b ? '#60A5FA' : '#64748B',
-              }}
-            >
-              {b === 'all' ? 'Todos' : b === 'UY' ? '🇺🇾 Uruguay' : '🇪🇸 España'}
-            </button>
-          ))}
+
         </div>
         <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid #1a2640' }}>
           {(['list', 'schedule'] as const).map(v => (
