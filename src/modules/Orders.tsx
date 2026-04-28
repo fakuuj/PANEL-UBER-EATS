@@ -66,7 +66,7 @@ const typeConfig: Record<string, { label: string; icon: string; color: string }>
   takeaway: { label: 'Take Away', icon: '🥡', color: '#F59E0B' },
 };
 
-const allOrders = [
+const initialOrders = [
   ...liveOrders,
   { id: '#8815', client: 'Mesa 1', type: 'interno', status: 'entregado', time: '—', amount: 7800, items: ['Asado x2', 'Tabla Quesos', 'Vino Malbec'], branch: 'UY' },
   { id: '#8816', client: 'Jorge L.', type: 'delivery', status: 'entregado', time: '—', amount: 2100, items: ['Milanesa', 'Papas'], branch: 'ES' },
@@ -74,6 +74,19 @@ const allOrders = [
   { id: '#8818', client: 'Lucía R.', type: 'whatsapp', status: 'confirmado', time: '12 min', amount: 1600, items: ['Empanadas x4'], branch: 'UY' },
   { id: '#8819', client: 'Felipe M.', type: 'takeaway', status: 'listo', time: '0 min', amount: 2900, items: ['Asado, Ensalada'], branch: 'UY' },
 ];
+
+export const getOrders = () => {
+  const stored = localStorage.getItem('gastro_orders');
+  if (stored) return JSON.parse(stored);
+  return initialOrders;
+};
+
+export const addOrder = (order: any) => {
+  const current = getOrders();
+  current.unshift(order);
+  localStorage.setItem('gastro_orders', JSON.stringify(current));
+  window.dispatchEvent(new Event('orders_updated'));
+};
 
 const nextStatus: Record<string, string> = {
   nuevo: 'en_cocina',
@@ -89,7 +102,18 @@ interface OrdersProps {
 }
 
 export default function Orders({ region = 'consolidated', setRegion }: OrdersProps) {
-  const [orders, setOrders] = useState(allOrders);
+  const [orders, setOrders] = useState(getOrders());
+
+  useEffect(() => {
+    const handleUpdate = () => setOrders(getOrders());
+    window.addEventListener('orders_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('orders_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
   const [filter, setFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   

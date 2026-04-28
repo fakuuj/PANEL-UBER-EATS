@@ -10,6 +10,7 @@ import HR from './modules/HR';
 import CRM from './modules/CRM';
 import Branches from './modules/Branches';
 import Analytics from './modules/Analytics';
+import Storefront from './modules/Storefront';
 import { notifications } from './data/mockData';
 
 
@@ -233,12 +234,14 @@ const moduleComponents: Record<string, React.ComponentType<any>> = {
   schedule: SchedulePlaceholder,
 };
 
-export default function App() {
+function AdminPanel() {
   const [activeModule, setActiveModule] = useState('dashboard');
   const [notifOpen, setNotifOpen] = useState(false);
   const [liveTime, setLiveTime] = useState(new Date());
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [region, setRegion] = useState<'consolidated' | 'uy' | 'es'>('consolidated');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginCode, setLoginCode] = useState('');
 
   const unreadNotif = notifications.filter(n => !n.read).length;
 
@@ -255,7 +258,6 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  // Close notifications on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as Element;
@@ -267,103 +269,93 @@ export default function App() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#050A14] px-4 font-['Inter']">
+        <div className="card-premium p-8 max-w-sm w-full text-center animate-fade-up">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(135deg, #1D4ED8 0%, #7C3AED 100%)' }}>
+            <span className="text-white text-2xl font-bold">G</span>
+          </div>
+          <h1 className="text-xl font-bold text-white mb-2">GastroOS Enterprise</h1>
+          <p className="text-sm text-slate-400 mb-8">Ingresa tu código de acceso para continuar</p>
+          <input 
+            type="password" 
+            placeholder="Código de acceso" 
+            value={loginCode}
+            onChange={(e) => setLoginCode(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && setIsAuthenticated(true)}
+            className="w-full bg-[#0D1629] border border-[#1a2640] rounded-xl px-4 py-3 text-white text-center tracking-widest mb-4 focus:outline-none focus:border-blue-500 transition-colors"
+          />
+          <button 
+            onClick={() => setIsAuthenticated(true)}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors"
+          >
+            Acceder al Panel
+          </button>
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="w-full mt-4 text-slate-500 hover:text-white text-sm transition-colors"
+          >
+            ← Volver a la Tienda
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const ActiveModule = moduleComponents[activeModule] || Dashboard;
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-primary, #050A14)', overflow: 'hidden' }}>
-      {/* Sidebar */}
-      <Sidebar
-        activeModule={activeModule}
-        setActiveModule={setActiveModule}
-        notifications={unreadNotif}
-      />
-
-      {/* Main Content */}
+      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} notifications={unreadNotif} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
-        {/* Header */}
         <div data-notif>
-          <Header
-            activeModule={activeModule}
-            notifOpen={notifOpen}
-            setNotifOpen={setNotifOpen}
-            theme={theme}
-            toggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-            region={region}
-            setRegion={setRegion}
-          />
+          <Header activeModule={activeModule} notifOpen={notifOpen} setNotifOpen={setNotifOpen} theme={theme} toggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} region={region} setRegion={setRegion} />
         </div>
-
-        {/* Module Content */}
-        <main
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            background: 'var(--bg-primary, #050A14)',
-          }}
-        >
-          {/* Live time bar */}
-          <div
-            className="flex items-center justify-between px-6 py-2 text-xs"
-            style={{
-              background: 'rgba(8,15,30,0.8)',
-              borderBottom: '1px solid #1a2640',
-            }}
-          >
+        <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-primary, #050A14)' }}>
+          <div className="flex items-center justify-between px-6 py-2 text-xs" style={{ background: 'rgba(8,15,30,0.8)', borderBottom: '1px solid #1a2640' }}>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5">
-                <div className="w-1.5 h-1.5 rounded-full animate-pulse-glow" style={{ background: '#10B981' }} />
-                <span style={{ color: '#475569' }}>Sistema operativo</span>
-              </div>
-              <span style={{ color: '#2d3f5e' }}>·</span>
-              <span style={{ color: '#475569' }}>
-                {liveTime.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-              </span>
-              <span style={{ color: '#2d3f5e' }}>·</span>
-              <span style={{ color: '#475569' }}>Uruguay & España conectadas</span>
+              <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full animate-pulse-glow" style={{ background: '#10B981' }} /><span style={{ color: '#475569' }}>Sistema operativo</span></div>
+              <span style={{ color: '#2d3f5e' }}>·</span><span style={{ color: '#475569' }}>{liveTime.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+              <span style={{ color: '#2d3f5e' }}>·</span><span style={{ color: '#475569' }}>Uruguay & España conectadas</span>
             </div>
             <div className="flex items-center gap-4 text-xs" style={{ color: '#2d3f5e' }}>
-              <span>UYU $41.82/USD</span>
-              <span>·</span>
-              <span>EUR €1.08/USD</span>
-              <span>·</span>
-              <span style={{ color: '#475569' }}>GastroOS Enterprise v2.4.1</span>
+              <span>UYU $41.82/USD</span><span>·</span><span>EUR €1.08/USD</span><span>·</span><span style={{ color: '#475569' }}>GastroOS Enterprise v2.4.1</span>
             </div>
           </div>
-
-          {activeModule === 'settings' ? (
-            <SettingsPlaceholder theme={theme} toggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} />
-          ) : (
-            <ActiveModule region={region} setRegion={setRegion} />
-          )}
+          {activeModule === 'settings' ? <SettingsPlaceholder theme={theme} toggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} /> : <ActiveModule region={region} setRegion={setRegion} />}
         </main>
-
-        {/* Bottom status bar */}
-        <div
-          className="flex items-center justify-between px-6 py-1.5"
-          style={{
-            background: 'rgba(5,10,20,0.95)',
-            borderTop: '1px solid #1a2640',
-          }}
-        >
+        <div className="flex items-center justify-between px-6 py-1.5" style={{ background: 'rgba(5,10,20,0.95)', borderTop: '1px solid #1a2640' }}>
           <div className="flex items-center gap-4 text-xs" style={{ color: '#2d3f5e' }}>
-            <div className="flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} />
-              <span>Servidor operativo · Latencia 12ms</span>
-            </div>
-            <span>·</span>
-            <span>Último backup: hace 3 min</span>
-            <span>·</span>
-            <span>482 pedidos hoy</span>
+            <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} /><span>Servidor operativo · Latencia 12ms</span></div>
+            <span>·</span><span>Último backup: hace 3 min</span><span>·</span><span>482 pedidos hoy</span>
           </div>
           <div className="flex items-center gap-4 text-xs" style={{ color: '#2d3f5e' }}>
-            <span>© 2025 GastroOS</span>
-            <span>·</span>
-            <span>Enterprise License</span>
-            <span>·</span>
-            <span style={{ color: '#1a2640' }}>v2.4.1</span>
+            <span>© 2026 GastroOS</span><span>·</span><span>Enterprise License</span><span>·</span><span style={{ color: '#1a2640' }}>v2.4.1</span>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+export default function App() {
+  const [route, setRoute] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handlePop = () => setRoute(window.location.pathname);
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, []);
+
+  if (route.startsWith('/admin')) {
+    return <AdminPanel />;
+  }
+
+  return <Storefront onNavigate={(module) => {
+    if (module === 'dashboard' || module === 'orders') {
+      window.history.pushState({}, '', '/admin');
+      setRoute('/admin');
+    }
+  }} />;
 }

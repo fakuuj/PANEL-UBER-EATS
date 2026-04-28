@@ -45,6 +45,7 @@ const navSections = [
   {
     label: 'EMPRESA',
     items: [
+      { id: 'storefront', icon: ShoppingBag, label: 'Tienda Pública', badge: 'WEB' },
       { id: 'branches', icon: Building2, label: 'Multi Sucursal', badge: null },
       { id: 'settings', icon: Settings, label: 'Configuración', badge: null },
     ]
@@ -141,7 +142,13 @@ export default function Sidebar({ activeModule, setActiveModule, notifications }
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveModule(item.id)}
+                  onClick={() => {
+                    if (item.id === 'storefront') {
+                      window.location.href = '/';
+                    } else {
+                      setActiveModule(item.id);
+                    }
+                  }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl mb-0.5 text-left transition-all nav-item ${isActive ? 'nav-active' : ''}`}
                   title={collapsed ? item.label : ''}
                   style={{
